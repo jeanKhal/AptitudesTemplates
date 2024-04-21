@@ -3,40 +3,44 @@
 	<div class="card card-outline card-primary">
 		<div class="card-header">
 			<div class="card-tools">
-				<a class="btn btn-block btn-sm btn-default btn-flat border-primary new_class" href="javascript:void(0)"><i class="fa fa-plus"></i> Add New</a>
+				<a class="btn btn-block btn-sm btn-default btn-flat border-primary new_subject" href="javascript:void(0)"><i class="fa fa-plus"></i> Add New</a>
 			</div>
 		</div>
 		<div class="card-body">
 			<table class="table tabe-hover table-bordered" id="list">
 				<colgroup>
+					<col width="10%">
 					<col width="20%">
-					<col width="60%">
+					<col width="20%">
+					<col width="30%">
 					<col width="20%">
 				</colgroup>
 				<thead>
 					<tr>
 						<th class="text-center">#</th>
-						<th>Level</th>
-						<th>Section</th>
+						<th>Code</th>
+						<th>Subjects</th>
+						<th>Description</th>
 						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php
 					$i = 1;
-					$qry = $conn->query("SELECT * FROM classes order by level asc, section asc ");
+					$qry = $conn->query("SELECT * FROM subjects order by unix_timestamp(date_created) desc ");
 					while($row= $qry->fetch_assoc()):
 					?>
 					<tr>
 						<th class="text-center"><?php echo $i++ ?></th>
-						<td><b><?php echo $row['level'] ?></b></td>
-						<td><b><?php echo $row['section'] ?></b></td>
+						<td><b><?php echo ucwords($row['subject_code']) ?></b></td>
+						<td><b><?php echo ucwords($row['subject']) ?></b></td>
+						<td><p class=""><?php echo $row['description'] ?></p></td>
 						<td class="text-center">
 		                    <div class="btn-group">
-		                        <a href="javascript:void(0)" data-id='<?php echo $row['id'] ?>' class="btn btn-primary btn-flat manage_class">
+		                        <a href="javascript:void(0)" data-id='<?php echo $row['id'] ?>' class="btn btn-primary btn-flat manage_subject">
 		                          <i class="fas fa-edit"></i>
 		                        </a>
-		                        <button type="button" class="btn btn-danger btn-flat delete_class" data-id="<?php echo $row['id'] ?>">
+		                        <button type="button" class="btn btn-danger btn-flat delete_subject" data-id="<?php echo $row['id'] ?>">
 		                          <i class="fas fa-trash"></i>
 		                        </button>
 	                      </div>
@@ -51,20 +55,20 @@
 <script>
 	$(document).ready(function(){
 		$('#list').dataTable()
-		$('.new_class').click(function(){
-			uni_modal("New class","manage_class.php")
+		$('.new_subject').click(function(){
+			uni_modal("New Subject","manage_subject.php")
 		})
-		$('.manage_class').click(function(){
-			uni_modal("Manage class","manage_class.php?id="+$(this).attr('data-id'))
+		$('.manage_subject').click(function(){
+			uni_modal("Manage Subject","manage_subject.php?id="+$(this).attr('data-id'))
 		})
-	$('.delete_class').click(function(){
-	_conf("Are you sure to delete this class?","delete_class",[$(this).attr('data-id')])
+	$('.delete_subject').click(function(){
+	_conf("Are you sure to delete this Subject?","delete_subject",[$(this).attr('data-id')])
 	})
 	})
-	function delete_class($id){
+	function delete_subject($id){
 		start_load()
 		$.ajax({
-			url:'ajax.php?action=delete_class',
+			url:'ajax.php?action=delete_subject',
 			method:'POST',
 			data:{id:$id},
 			success:function(resp){
